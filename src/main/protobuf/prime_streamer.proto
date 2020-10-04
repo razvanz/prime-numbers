@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.prime_streamer";
+option java_outer_classname = "PrimeStreamerProto";
+
+service PrimeStreamer {
+    rpc listPrimes (ListPrimesRequest) returns (stream ListPrimesResponse) {}
+}
+
+message ListPrimesRequest {
+    int32 max = 1;
+}
+
+message ListPrimesResponse {
+    int32 number = 1;
+}
