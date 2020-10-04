@@ -22,12 +22,14 @@ class RouteHandler()(implicit val system: ActorSystem[_]) {
       }
     }
 
-  def listPrimesHandler(max: String): StandardRoute = {
-    if (!max.forall(_.isDigit) || max.toInt < 2) {
-      complete(HttpResponse(StatusCodes.BadRequest, entity = "Error: max must be a number >= 2"))
+  def listPrimesHandler(maxString: String): StandardRoute = {
+    val max = maxString.toIntOption.getOrElse(-1)
+
+    if (max < 0) {
+      complete(HttpResponse(StatusCodes.BadRequest, entity = s"Error: max must be a positive int32 (range: 0 - ${Int.MaxValue.toString})"))
     }
     else {
-      val byteStringSource = primeStreamerClient.listPrimes(ListPrimesRequest(max.toInt))
+      val byteStringSource = primeStreamerClient.listPrimes(ListPrimesRequest(max))
         .map(r => r.number.toString)
         .map(s => ByteString(s))
         .intersperse(ByteString(","))
