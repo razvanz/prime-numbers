@@ -29,7 +29,8 @@ class RouteHandler()(implicit val system: ActorSystem[_]) {
     else {
       val byteStringSource = primeStreamerClient.listPrimes(ListPrimesRequest(max.toInt))
         .map(r => r.number.toString)
-        .map(s => ByteString(s + "\n"))
+        .map(s => ByteString(s))
+        .intersperse(ByteString(","))
 
       complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, byteStringSource))
     }
