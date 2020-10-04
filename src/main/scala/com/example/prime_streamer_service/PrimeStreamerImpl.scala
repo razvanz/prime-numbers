@@ -11,7 +11,7 @@ class PrimeStreamerImpl(system: ActorSystem[_]) extends PrimeStreamer {
   override def listPrimes(request: ListPrimesRequest): Source[ListPrimesResponse, NotUsed] = {
     system.log.info("Request listPrimes(max:{})", request.max)
 
-    Source(LazyList.from(2, 1).takeWhile(_ <= request.max))
+    Source(PrimesGenerator.primes.takeWhile(_ <= request.max))
       .map(i => ListPrimesResponse(i))
   }
 }
