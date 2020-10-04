@@ -3,7 +3,6 @@ package com.example.proxy_server
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -20,16 +19,9 @@ class ProxyServer(system: ActorSystem[_]) {
     implicit val sys: ActorSystem[_] = system
     implicit val ec: ExecutionContext = system.executionContext
 
-    val routes =
-      pathPrefix("/") {
-        get {
-          complete("hello world")
-        }
-      }
-
     val bound: Future[Http.ServerBinding] = Http(system)
       .newServerAt("localhost", 8080)
-      .bind(routes)
+      .bind(new RouteHandler()(system).routes)
 
     bound.onComplete {
       case Success(binding) =>
